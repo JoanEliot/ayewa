@@ -11,7 +11,7 @@ CLASSIFIERS = []
 
 setup(
     name='ayewa',
-    version=0.02,
+    version=0.03,
     description='Core Module for Ayewa Application',
     author='siteshell.net',
     author_email='pdbethke@siteshell.net',
