@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from wagtail.core.models import Page
 from wagtail.core.fields import RichTextField
 from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel, FieldRowPanel
+from wagtail.snippets.models import register_snippet
 
 
 class IndexPage(Page):
@@ -36,14 +37,53 @@ class Solution(Page):
         except AttributeError:
             return 'unassigned'
 
+@register_snippet
+class ResourceType(models.Model):
+    name = models.CharField(_('name'), max_length=40, blank=True, default='')
+    description = RichTextField('Description', blank=True)
+
+    class Meta:
+        verbose_name_plural = "Resource Types"
+        verbose_name = "Resource Type"
+        app_label = 'ayewa'
+
+
+    def __str__(self):
+        try:
+            return '{name}'.format(
+                name=self.name,
+            )
+        except AttributeError:
+            return 'unassigned'
+
+@register_snippet
+class ResourceClass(models.Model):
+    name = models.CharField(_('name'), max_length=40, blank=True, default='')
+    description = RichTextField('Description', blank=True)
+
+    class Meta:
+        verbose_name_plural = "Resource Classes"
+        verbose_name = "Resource Class"
+        app_label = 'ayewa'
+
+
+    def __str__(self):
+        try:
+            return '{name}'.format(
+                name=self.name,
+            )
+        except AttributeError:
+            return 'unassigned'
+
+
 class Resource(Page):
     summary = models.TextField(_('Summary'), default='', blank=True, null=True)
     description = RichTextField('Description', blank=True)
-    # resource_type = models.ForeignKey(ResourceType, blank=True, null=True, related_name='resource_type')
+    resource_type = models.ForeignKey(ResourceType, blank=True, on_delete=models.SET_NULL, null=True, related_name='resource_type')
     # user_rating = models.ForeignKey(UserRating, blank=True, null=True, related_name='rating')
     # internal_rating = models.ForeignKey(InternalRating, blank=True, null=True, related_name='internal_rating')
     # rank = models.ForeignKey(Rank, blank=True, null=True, related_name='rank')
-    # resource_class = models.ManyToManyField(ResourceClass, blank=True, related_name='resource_class')
+    resource_class = models.ManyToManyField(ResourceClass, blank=True, related_name='resource_class')
     # resource_need = models.ManyToManyField(ResourceNeed, blank=True, related_name='resource_need')
     # scope = models.ManyToManyField(Scope, blank=True, related_name='scope')
     # solutionon = models.ManyToManyField(Solution, blank=True, related_name='solution')
