@@ -42,6 +42,12 @@ class Solution(Page):
         except AttributeError:
             return 'unassigned'
 
+class ResourceIndexPage(IndexPage):
+
+    content_panels = Page.content_panels + [
+        FieldPanel('intro', classname="full")
+    ]
+
 @register_snippet
 class ResourceNeed(models.Model):
     name = models.CharField(_('name'), max_length=40, blank=True, default='')
@@ -186,7 +192,7 @@ class Resource(Page):
     resource_class = ParentalManyToManyField('ResourceClass', blank=True)
     resource_need = ParentalManyToManyField('ResourceNeed', blank=True)
     scope = ParentalManyToManyField('Scope', blank=True)
-    # solutionon = models.ManyToManyField(Solution, blank=True, related_name='solution')
+    solution = ParentalManyToManyField('Solution', blank=True)
     email_address = models.CharField(_('Email Address'), max_length=64, blank=True, default='')
     primary_phone = models.CharField(_('Primary Phone'), max_length=50, blank=True, null=True, default=None)
     address_1 = models.CharField(_('Address 1'), max_length=64, blank=True, null=True, default='')
@@ -243,6 +249,12 @@ class Resource(Page):
                         widget=forms.CheckboxSelectMultiple,
                     ),
                     ]),
+                FieldRowPanel([
+                    FieldPanel(
+                        'solution',
+                        widget=forms.CheckboxSelectMultiple,
+                    ),
+                ]),
                 FieldPanel(
                     'user_rating',
                     widget=forms.Select,
