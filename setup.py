@@ -11,11 +11,11 @@ CLASSIFIERS = []
 
 setup(
     name='ayewa',
-    version=0.03,
+    version=0.04,
     description='Core Module for Ayewa Application',
     author='siteshell.net',
     author_email='pdbethke@siteshell.net',
-    url='https://github.com/pdbethke/erclient',
+    url='https://github.com/pdbethke/ayewa',
     packages=find_packages(),
     license='LICENSE.txt',
     platforms=['OS Independent'],
