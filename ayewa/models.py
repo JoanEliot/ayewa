@@ -1,9 +1,14 @@
 from django.db import models
+from django import forms
 from django.utils.translation import ugettext_lazy as _
+
+from modelcluster.fields import ParentalManyToManyField
+
 from wagtail.core.models import Page
 from wagtail.core.fields import RichTextField
-from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel, FieldRowPanel
+from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel, FieldRowPanel, MultiFieldPanel
 from wagtail.snippets.models import register_snippet
+
 
 
 class IndexPage(Page):
@@ -28,6 +33,25 @@ class Solution(Page):
         FieldPanel('description', classname="full"),
 
     ]
+
+    def __str__(self):
+        try:
+            return '{name}'.format(
+                name=self.name,
+            )
+        except AttributeError:
+            return 'unassigned'
+
+@register_snippet
+class ResourceNeed(models.Model):
+    name = models.CharField(_('name'), max_length=40, blank=True, default='')
+    description = RichTextField('Description', blank=True)
+
+    class Meta:
+        verbose_name_plural = "Resource Needs"
+        verbose_name = "Resource Need"
+        app_label = 'ayewa'
+
 
     def __str__(self):
         try:
@@ -75,17 +99,93 @@ class ResourceClass(models.Model):
         except AttributeError:
             return 'unassigned'
 
+@register_snippet
+class Scope(models.Model):
+    name = models.CharField(_('name'), max_length=40, blank=True, default='')
+    description = RichTextField('Description', blank=True)
+
+    class Meta:
+        verbose_name_plural = "Scopes"
+        verbose_name = "Scope"
+        app_label = 'ayewa'
+
+
+    def __str__(self):
+        try:
+            return '{name}'.format(
+                name=self.name,
+            )
+        except AttributeError:
+            return 'unassigned'
+
+@register_snippet
+class Rank(models.Model):
+    name = models.CharField(_('name'), max_length=40, blank=True, default='')
+    description = RichTextField('Description', blank=True)
+
+    class Meta:
+        verbose_name_plural = "Ranks"
+        verbose_name = "Rank"
+        app_label = 'ayewa'
+
+
+    def __str__(self):
+        try:
+            return '{name}'.format(
+                name=self.name,
+            )
+        except AttributeError:
+            return 'unassigned'
+
+@register_snippet
+class UserRating(models.Model):
+    name = models.CharField(_('name'), max_length=40, blank=True, default='')
+    description = RichTextField('Description', blank=True)
+
+    class Meta:
+        verbose_name_plural = "User Ratings"
+        verbose_name = "User Rating"
+        app_label = 'ayewa'
+
+
+    def __str__(self):
+        try:
+            return '{name}'.format(
+                name=self.name,
+            )
+        except AttributeError:
+            return 'unassigned'
+
+@register_snippet
+class InternalRating(models.Model):
+    name = models.CharField(_('name'), max_length=40, blank=True, default='')
+    description = RichTextField('Description', blank=True)
+
+    class Meta:
+        verbose_name_plural = "Internal Ratings"
+        verbose_name = "Internal Rating"
+        app_label = 'ayewa'
+
+
+    def __str__(self):
+        try:
+            return '{name}'.format(
+                name=self.name,
+            )
+        except AttributeError:
+            return 'unassigned'
+
 
 class Resource(Page):
     summary = models.TextField(_('Summary'), default='', blank=True, null=True)
     description = RichTextField('Description', blank=True)
     resource_type = models.ForeignKey(ResourceType, blank=True, on_delete=models.SET_NULL, null=True, related_name='resource_type')
-    # user_rating = models.ForeignKey(UserRating, blank=True, null=True, related_name='rating')
-    # internal_rating = models.ForeignKey(InternalRating, blank=True, null=True, related_name='internal_rating')
-    # rank = models.ForeignKey(Rank, blank=True, null=True, related_name='rank')
-    resource_class = models.ManyToManyField(ResourceClass, blank=True, related_name='resource_class')
-    # resource_need = models.ManyToManyField(ResourceNeed, blank=True, related_name='resource_need')
-    # scope = models.ManyToManyField(Scope, blank=True, related_name='scope')
+    user_rating = models.ForeignKey(UserRating, blank=True, on_delete=models.SET_NULL, null=True, )
+    internal_rating = models.ForeignKey(InternalRating, blank=True, on_delete=models.SET_NULL, null=True, )
+    rank = models.ForeignKey(Rank, blank=True, on_delete=models.SET_NULL, null=True, )
+    resource_class = ParentalManyToManyField('ResourceClass', blank=True)
+    resource_need = ParentalManyToManyField('ResourceNeed', blank=True)
+    scope = ParentalManyToManyField('Scope', blank=True)
     # solutionon = models.ManyToManyField(Solution, blank=True, related_name='solution')
     email_address = models.CharField(_('Email Address'), max_length=64, blank=True, default='')
     primary_phone = models.CharField(_('Primary Phone'), max_length=50, blank=True, null=True, default=None)
@@ -101,25 +201,65 @@ class Resource(Page):
                                validators=[])  # TODO: Add a validator
 
     content_panels = Page.content_panels + [
-        FieldPanel('description', classname="full"),
-        FieldPanel('summary', classname="full"),
-        FieldRowPanel([
-            FieldPanel('email_address',),
-            FieldPanel('primary_phone',)
-        ]),
-        FieldPanel('address_1', classname="full"),
-        FieldPanel('address_2', classname="full"),
-        FieldRowPanel([
+        MultiFieldPanel(
+            [
+                FieldPanel('summary', ),
+                FieldPanel('description', ),
+            ],
+            heading="Summary/Description",
+            classname="collapsible collapsed"),
+        MultiFieldPanel(
+            [
+                FieldPanel('email_address', ),
+                FieldPanel('primary_phone', ),
+                FieldPanel('website', ),
+            ],
+            heading="Contact Info",
+            classname="collapsible collapsed"),
+        MultiFieldPanel(
+        [
+            FieldPanel('address_1', ),
+            FieldPanel('address_2', ),
             FieldPanel('city', ),
-            FieldPanel('state',),
+            FieldRowPanel([
+                FieldPanel('state', ),
+                FieldPanel('postal_code', ),
+                FieldPanel('country', ),
 
-        ]),
-        FieldRowPanel([
-            FieldPanel('postal_code', ),
-            FieldPanel('country', ),
+            ])
+        ],
+            heading="Address Info",
+            classname="collapsible collapsed"),
 
-        ]),
-        FieldPanel('website', classname="full"),
+        MultiFieldPanel(
+            [
+                FieldRowPanel([
+                    FieldPanel(
+                        'resource_class',
+                        widget=forms.CheckboxSelectMultiple,
+                    ),
+                    FieldPanel(
+                        'resource_type',
+                        widget=forms.CheckboxSelectMultiple,
+                    ),
+                    ]),
+                FieldPanel(
+                    'user_rating',
+                    widget=forms.Select,
+                ),
+                FieldPanel(
+                    'internal_rating',
+                    widget=forms.Select,
+                ),
+                FieldPanel(
+                    'rank',
+                    widget=forms.Select,
+                ),
+
+            ],
+            heading="Categorization",
+            classname="collapsible collapsed"
+        ),
     ]
 
     def __str__(self):
