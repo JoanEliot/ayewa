@@ -20,7 +20,33 @@ class AyewaIndexPage(IndexPage):
         FieldPanel('intro', classname="full")
     ]
 
+class ActionApproach(Page):
+    name = models.CharField(_('name'), max_length=40, blank=True, default='')
+    description = RichTextField('Description', blank=True)
+
+    class Meta:
+        app_label = 'ayewa'
+        verbose_name = _("Action Approach")
+        verbose_name_plural =  _("Action Approaches")
+
+    def __str__(self):
+        return '{name}'.format(
+            name=self.name,
+        )
+
+class ActionApproachIndexPage(IndexPage):
+
+    content_panels = Page.content_panels + [
+        FieldPanel('intro', classname="full")
+    ]
+
 class SolutionIndexPage(IndexPage):
+
+    content_panels = Page.content_panels + [
+        FieldPanel('intro', classname="full")
+    ]
+
+class PeopleIndexPage(IndexPage):
 
     content_panels = Page.content_panels + [
         FieldPanel('intro', classname="full")
@@ -172,6 +198,8 @@ class InternalRating(models.Model):
         verbose_name = "Internal Rating"
         app_label = 'ayewa'
 
+@register_snippet
+class Role(models.Model):
 
     def __str__(self):
         try:
@@ -181,6 +209,46 @@ class InternalRating(models.Model):
         except AttributeError:
             return 'unassigned'
 
+    name = models.CharField(_('name'), max_length=255, blank=False, null=True, )
+
+
+class People(Page):
+    first_name = models.CharField(_('first_name'), max_length=40, blank=True, default='')
+    last_name = models.CharField(_('last_name'), max_length=40, blank=True, default='')
+    role = ParentalManyToManyField('Role', blank=True)
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                FieldPanel('first_name', ),
+                FieldPanel('last_name', ),
+            ],
+            heading="Personal Details",
+            classname="collapsible expanded"),
+        MultiFieldPanel(
+            [
+                FieldPanel('role', ),
+            ],
+            heading="Roles/Other",
+            classname="collapsible collapsed"),
+    ]
+
+    class Meta:
+        app_label = 'ayewa'
+        verbose_name = _("Person")
+
+
+
+    def __str__(self):
+        return '{first} {last}'.format(
+            first=self.first_name,
+            last=self.last_name
+        )
+
+
+
+    def list_roles(self):
+        return ['{name}, {resource}'.format(name=i.name, resource=i.resource.name) for i in self.role.all()]
 
 class Resource(Page):
     summary = models.TextField(_('Summary'), default='', blank=True, null=True)
@@ -193,6 +261,7 @@ class Resource(Page):
     resource_need = ParentalManyToManyField('ResourceNeed', blank=True)
     scope = ParentalManyToManyField('Scope', blank=True)
     solution = ParentalManyToManyField('Solution', blank=True)
+    people = ParentalManyToManyField('People', blank=True)
     email_address = models.CharField(_('Email Address'), max_length=64, blank=True, default='')
     primary_phone = models.CharField(_('Primary Phone'), max_length=50, blank=True, null=True, default=None)
     address_1 = models.CharField(_('Address 1'), max_length=64, blank=True, null=True, default='')
@@ -235,6 +304,13 @@ class Resource(Page):
             ])
         ],
             heading="Address Info",
+            classname="collapsible collapsed"),
+
+        MultiFieldPanel(
+            [
+                FieldPanel('people', ),
+            ],
+            heading="People",
             classname="collapsible collapsed"),
 
         MultiFieldPanel(
@@ -342,3 +418,4 @@ class Resource(Page):
     is_project.boolean = True
     is_organization.short_description = 'Org?'
     is_organization.boolean = True
+
