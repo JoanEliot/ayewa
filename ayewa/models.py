@@ -6,51 +6,67 @@ from modelcluster.fields import ParentalManyToManyField
 
 from wagtail.core.models import Page
 from wagtail.core.fields import RichTextField
-from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel, FieldRowPanel, MultiFieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel, FieldRowPanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.snippets.models import register_snippet
+from wagtail.core.fields import StreamField
+
+from .blocks import BaseStreamBlock
 
 
 
 class IndexPage(Page):
     intro = RichTextField(blank=True)
+    body = StreamField(
+        BaseStreamBlock(), verbose_name="Page body", blank=True
+    )
+
 
 class AyewaIndexPage(IndexPage):
-
     content_panels = Page.content_panels + [
-        FieldPanel('intro', classname="full")
+        FieldPanel('intro', classname="full"),
+        StreamFieldPanel('body'),
     ]
 
-class ActionApproach(Page):
-    name = models.CharField(_('name'), max_length=40, blank=True, default='')
-    description = RichTextField('Description', blank=True)
-
-    class Meta:
-        app_label = 'ayewa'
-        verbose_name = _("Action Approach")
-        verbose_name_plural =  _("Action Approaches")
-
-    def __str__(self):
-        return '{name}'.format(
-            name=self.name,
-        )
 
 class ActionApproachIndexPage(IndexPage):
-
     content_panels = Page.content_panels + [
-        FieldPanel('intro', classname="full")
+        FieldPanel('intro', classname="full"),
+        StreamFieldPanel('body'),
     ]
+
 
 class SolutionIndexPage(IndexPage):
-
     content_panels = Page.content_panels + [
-        FieldPanel('intro', classname="full")
+        FieldPanel('intro', classname="full"),
+        StreamFieldPanel('body'),
     ]
+
 
 class PeopleIndexPage(IndexPage):
-
     content_panels = Page.content_panels + [
-        FieldPanel('intro', classname="full")
+        FieldPanel('intro', classname="full"),
+        StreamFieldPanel('body'),
     ]
+
+
+class ResourceIndexPage(IndexPage):
+    content_panels = Page.content_panels + [
+        FieldPanel('intro', classname="full"),
+        StreamFieldPanel('body'),
+    ]
+
+class ScienceIndexPage(IndexPage):
+    content_panels = Page.content_panels + [
+        FieldPanel('intro', classname="full"),
+        StreamFieldPanel('body'),
+    ]
+
+class OtherIndexPage(IndexPage):
+    content_panels = Page.content_panels + [
+        FieldPanel('intro', classname="full"),
+        StreamFieldPanel('body'),
+    ]
+
 
 class Solution(Page):
     description = RichTextField('Description', blank=True)
@@ -68,68 +84,21 @@ class Solution(Page):
         except AttributeError:
             return 'unassigned'
 
-class ResourceIndexPage(IndexPage):
 
-    content_panels = Page.content_panels + [
-        FieldPanel('intro', classname="full")
-    ]
-
-@register_snippet
-class ResourceNeed(models.Model):
+class ActionApproach(Page):
     name = models.CharField(_('name'), max_length=40, blank=True, default='')
     description = RichTextField('Description', blank=True)
 
     class Meta:
-        verbose_name_plural = "Resource Needs"
-        verbose_name = "Resource Need"
         app_label = 'ayewa'
-
+        verbose_name = _("Action Approach")
+        verbose_name_plural = _("Action Approaches")
 
     def __str__(self):
-        try:
-            return '{name}'.format(
-                name=self.name,
-            )
-        except AttributeError:
-            return 'unassigned'
+        return '{name}'.format(
+            name=self.name,
+        )
 
-@register_snippet
-class ResourceType(models.Model):
-    name = models.CharField(_('name'), max_length=40, blank=True, default='')
-    description = RichTextField('Description', blank=True)
-
-    class Meta:
-        verbose_name_plural = "Resource Types"
-        verbose_name = "Resource Type"
-        app_label = 'ayewa'
-
-
-    def __str__(self):
-        try:
-            return '{name}'.format(
-                name=self.name,
-            )
-        except AttributeError:
-            return 'unassigned'
-
-@register_snippet
-class ResourceClass(models.Model):
-    name = models.CharField(_('name'), max_length=40, blank=True, default='')
-    description = RichTextField('Description', blank=True)
-
-    class Meta:
-        verbose_name_plural = "Resource Classes"
-        verbose_name = "Resource Class"
-        app_label = 'ayewa'
-
-
-    def __str__(self):
-        try:
-            return '{name}'.format(
-                name=self.name,
-            )
-        except AttributeError:
-            return 'unassigned'
 
 @register_snippet
 class Scope(models.Model):
@@ -141,7 +110,6 @@ class Scope(models.Model):
         verbose_name = "Scope"
         app_label = 'ayewa'
 
-
     def __str__(self):
         try:
             return '{name}'.format(
@@ -149,6 +117,7 @@ class Scope(models.Model):
             )
         except AttributeError:
             return 'unassigned'
+
 
 @register_snippet
 class Rank(models.Model):
@@ -160,7 +129,6 @@ class Rank(models.Model):
         verbose_name = "Rank"
         app_label = 'ayewa'
 
-
     def __str__(self):
         try:
             return '{name}'.format(
@@ -168,6 +136,7 @@ class Rank(models.Model):
             )
         except AttributeError:
             return 'unassigned'
+
 
 @register_snippet
 class UserRating(models.Model):
@@ -179,7 +148,6 @@ class UserRating(models.Model):
         verbose_name = "User Rating"
         app_label = 'ayewa'
 
-
     def __str__(self):
         try:
             return '{name}'.format(
@@ -187,6 +155,7 @@ class UserRating(models.Model):
             )
         except AttributeError:
             return 'unassigned'
+
 
 @register_snippet
 class InternalRating(models.Model):
@@ -197,6 +166,7 @@ class InternalRating(models.Model):
         verbose_name_plural = "Internal Ratings"
         verbose_name = "Internal Rating"
         app_label = 'ayewa'
+
 
 @register_snippet
 class Role(models.Model):
@@ -237,23 +207,78 @@ class People(Page):
         app_label = 'ayewa'
         verbose_name = _("Person")
 
-
-
     def __str__(self):
         return '{first} {last}'.format(
             first=self.first_name,
             last=self.last_name
         )
 
-
-
     def list_roles(self):
         return ['{name}, {resource}'.format(name=i.name, resource=i.resource.name) for i in self.role.all()]
+
+
+@register_snippet
+class ResourceNeed(models.Model):
+    name = models.CharField(_('name'), max_length=40, blank=True, default='')
+    description = RichTextField('Description', blank=True)
+
+    class Meta:
+        verbose_name_plural = "Resource Needs"
+        verbose_name = "Resource Need"
+        app_label = 'ayewa'
+
+    def __str__(self):
+        try:
+            return '{name}'.format(
+                name=self.name,
+            )
+        except AttributeError:
+            return 'unassigned'
+
+
+@register_snippet
+class ResourceType(models.Model):
+    name = models.CharField(_('name'), max_length=40, blank=True, default='')
+    description = RichTextField('Description', blank=True)
+
+    class Meta:
+        verbose_name_plural = "Resource Types"
+        verbose_name = "Resource Type"
+        app_label = 'ayewa'
+
+    def __str__(self):
+        try:
+            return '{name}'.format(
+                name=self.name,
+            )
+        except AttributeError:
+            return 'unassigned'
+
+
+@register_snippet
+class ResourceClass(models.Model):
+    name = models.CharField(_('name'), max_length=40, blank=True, default='')
+    description = RichTextField('Description', blank=True)
+
+    class Meta:
+        verbose_name_plural = "Resource Classes"
+        verbose_name = "Resource Class"
+        app_label = 'ayewa'
+
+    def __str__(self):
+        try:
+            return '{name}'.format(
+                name=self.name,
+            )
+        except AttributeError:
+            return 'unassigned'
+
 
 class Resource(Page):
     summary = models.TextField(_('Summary'), default='', blank=True, null=True)
     description = RichTextField('Description', blank=True)
-    resource_type = models.ForeignKey(ResourceType, blank=True, on_delete=models.SET_NULL, null=True, related_name='resource_type')
+    resource_type = models.ForeignKey(ResourceType, blank=True, on_delete=models.SET_NULL, null=True,
+                                      related_name='resource_type')
     user_rating = models.ForeignKey(UserRating, blank=True, on_delete=models.SET_NULL, null=True, )
     internal_rating = models.ForeignKey(InternalRating, blank=True, on_delete=models.SET_NULL, null=True, )
     rank = models.ForeignKey(Rank, blank=True, on_delete=models.SET_NULL, null=True, )
@@ -292,17 +317,17 @@ class Resource(Page):
             heading="Contact Info",
             classname="collapsible collapsed"),
         MultiFieldPanel(
-        [
-            FieldPanel('address_1', ),
-            FieldPanel('address_2', ),
-            FieldPanel('city', ),
-            FieldRowPanel([
-                FieldPanel('state', ),
-                FieldPanel('postal_code', ),
-                FieldPanel('country', ),
+            [
+                FieldPanel('address_1', ),
+                FieldPanel('address_2', ),
+                FieldPanel('city', ),
+                FieldRowPanel([
+                    FieldPanel('state', ),
+                    FieldPanel('postal_code', ),
+                    FieldPanel('country', ),
 
-            ])
-        ],
+                ])
+            ],
             heading="Address Info",
             classname="collapsible collapsed"),
 
@@ -324,7 +349,7 @@ class Resource(Page):
                         'resource_type',
                         widget=forms.CheckboxSelectMultiple,
                     ),
-                    ]),
+                ]),
                 FieldRowPanel([
                     FieldPanel(
                         'solution',
@@ -418,4 +443,3 @@ class Resource(Page):
     is_project.boolean = True
     is_organization.short_description = 'Org?'
     is_organization.boolean = True
-
