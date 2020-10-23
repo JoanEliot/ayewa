@@ -16,6 +16,7 @@ from .blocks import BaseStreamBlock
 
 class IndexPage(Page):
     intro = RichTextField(blank=True)
+    nav_description = models.CharField(_('Navigation Description'), max_length=255, blank=True, default='')
     body = StreamField(
         BaseStreamBlock(), verbose_name="Page body", blank=True
     )
@@ -31,39 +32,43 @@ class AyewaIndexPage(IndexPage):
 class ActionApproachIndexPage(IndexPage):
     content_panels = Page.content_panels + [
         FieldPanel('intro', classname="full"),
+        FieldPanel('nav_description', classname="full"),
         StreamFieldPanel('body'),
     ]
+    subpage_types = ['ayewa.ActionApproach']
 
 
 class SolutionIndexPage(IndexPage):
     content_panels = Page.content_panels + [
-        FieldPanel('intro', classname="full"),
+        FieldPanel('nav_description', classname="full"),
         StreamFieldPanel('body'),
     ]
+    subpage_types = ['ayewa.Solution']
 
 
 class PeopleIndexPage(IndexPage):
     content_panels = Page.content_panels + [
-        FieldPanel('intro', classname="full"),
+        FieldPanel('nav_description', classname="full"),
         StreamFieldPanel('body'),
     ]
-
+    subpage_types = ['ayewa.People']
 
 class ResourceIndexPage(IndexPage):
     content_panels = Page.content_panels + [
-        FieldPanel('intro', classname="full"),
+        FieldPanel('nav_description', classname="full"),
         StreamFieldPanel('body'),
     ]
+    subpage_types = ['ayewa.Resource']
 
 class ScienceIndexPage(IndexPage):
     content_panels = Page.content_panels + [
-        FieldPanel('intro', classname="full"),
+        FieldPanel('nav_description', classname="full"),
         StreamFieldPanel('body'),
     ]
 
 class OtherIndexPage(IndexPage):
     content_panels = Page.content_panels + [
-        FieldPanel('intro', classname="full"),
+        FieldPanel('nav_description', classname="full"),
         StreamFieldPanel('body'),
     ]
 

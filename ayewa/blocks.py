@@ -3,6 +3,32 @@ from wagtail.embeds.blocks import EmbedBlock
 from wagtail.core.blocks import (
     CharBlock, ChoiceBlock, RichTextBlock, StreamBlock, StructBlock, TextBlock,
 )
+from wagtail.core.models import Page
+
+
+
+
+class IndexPageNavBlock(StructBlock):
+    """
+    Custom `StructBlock` for utilizing images with associated caption and
+    attribution data
+    """
+    image = ImageChooserBlock(required=True)
+    caption = CharBlock(required=False)
+    attribution = CharBlock(required=False)
+
+    class Meta:
+        icon = 'image'
+        template = "blocks/index_page_nav_block.html"
+
+class IndexPageAboutUsBlock(StructBlock):
+
+    image = ImageChooserBlock(required=False)
+    text = RichTextBlock(required=False)
+
+    class Meta:
+        icon = 'image'
+        template = "blocks/index_page_about_us_block.html"
 
 
 class ImageBlock(StructBlock):
@@ -13,6 +39,7 @@ class ImageBlock(StructBlock):
     image = ImageChooserBlock(required=True)
     caption = CharBlock(required=False)
     attribution = CharBlock(required=False)
+    pages = Page.objects.filter()
 
     class Meta:
         icon = 'image'
@@ -65,3 +92,7 @@ class BaseStreamBlock(StreamBlock):
         help_text='Insert an embed URL e.g https://www.youtube.com/embed/SGJFWirQ3ks',
         icon="fa-s15",
         template="blocks/embed_block.html")
+    index_page_about_block = IndexPageAboutUsBlock(
+        help_text='"About Us" block for the index page',
+        icon="fa-s15",
+    )

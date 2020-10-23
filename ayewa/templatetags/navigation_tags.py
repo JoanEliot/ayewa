@@ -97,3 +97,18 @@ def get_footer_text(context):
     return {
         'footer_text': footer_text,
     }
+
+@register.inclusion_tag('tags/index_page_menu.html', takes_context=True)
+def index_page_menu(context, parent, calling_page=None):
+    menuitems = parent.get_children().live().in_menu()
+    for menuitem in menuitems:
+        menuitem.nav_description = 'Foobar'
+        # We don't directly check if calling_page is None since the template
+        # engine can pass an empty string to calling_page
+        # if the variable passed as calling_page does not exist.
+    return {
+        'calling_page': calling_page,
+        'menuitems': menuitems,
+        # required by the pageurl tag that we want to use within this template
+        'request': context['request'],
+    }
