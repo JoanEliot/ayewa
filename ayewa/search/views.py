@@ -5,7 +5,10 @@ from django.shortcuts import render
 from wagtail.core.models import Page
 from wagtail.search.models import Query
 
-from .models import ActionApproach, Resource, Solution, People
+from bakerydemo.blog.models import BlogPage
+from bakerydemo.breads.models import BreadPage
+from bakerydemo.locations.models import LocationPage
+
 
 def search(request):
     # Search
@@ -20,19 +23,16 @@ def search(request):
             # If we aren't using ElasticSearch for the demo, fall back to native db search.
             # But native DB search can't search specific fields in our models on a `Page` query.
             # So for demo purposes ONLY, we hard-code in the model names we want to search.
-            action_results = ActionApproach.objects.live().search(search_query)
-            action_page_ids = [p.page_ptr.id for p in action_results]
+            blog_results = BlogPage.objects.live().search(search_query)
+            blog_page_ids = [p.page_ptr.id for p in blog_results]
 
-            resource_results = Resource.objects.live().search(search_query)
-            resource_page_ids = [p.page_ptr.id for p in resource_results]
+            bread_results = BreadPage.objects.live().search(search_query)
+            bread_page_ids = [p.page_ptr.id for p in bread_results]
 
-            solution_results = Solution.objects.live().search(search_query)
-            solution_result_ids = [p.page_ptr.id for p in solution_results]
+            location_results = LocationPage.objects.live().search(search_query)
+            location_result_ids = [p.page_ptr.id for p in location_results]
 
-            people_results = People.objects.live().search(search_query)
-            people_result_ids = [p.page_ptr.id for p in people_results]
-
-            page_ids = action_page_ids + resource_page_ids + solution_result_ids + people_result_ids
+            page_ids = blog_page_ids + bread_page_ids + location_result_ids
             search_results = Page.objects.live().filter(id__in=page_ids)
 
         query = Query.get(search_query)
