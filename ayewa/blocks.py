@@ -6,21 +6,6 @@ from wagtail.core.blocks import (
 from wagtail.core.models import Page
 
 
-
-
-class IndexPageNavBlock(StructBlock):
-    """
-    Custom `StructBlock` for utilizing images with associated caption and
-    attribution data
-    """
-    image = ImageChooserBlock(required=True)
-    caption = CharBlock(required=False)
-    attribution = CharBlock(required=False)
-
-    class Meta:
-        icon = 'image'
-        template = "blocks/index_page_nav_block.html"
-
 class IndexPageAboutUsBlock(StructBlock):
 
     image = ImageChooserBlock(required=False)
