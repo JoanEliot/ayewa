@@ -8,7 +8,6 @@ from wagtail.core.models import Page
 
 class IndexPageAboutUsBlock(StructBlock):
 
-    image = ImageChooserBlock(required=False)
     text = RichTextBlock(required=False)
 
     class Meta:
