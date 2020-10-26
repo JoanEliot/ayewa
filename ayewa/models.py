@@ -16,7 +16,6 @@ from .blocks import BaseStreamBlock
 
 class IndexPage(Page):
     intro = RichTextField(blank=True)
-    nav_description = models.CharField(_('Navigation Description'), max_length=255, blank=True, default='')
     body = StreamField(
         BaseStreamBlock(), verbose_name="Page body", blank=True
     )
@@ -32,7 +31,6 @@ class AyewaIndexPage(IndexPage):
 class ActionApproachIndexPage(IndexPage):
     content_panels = Page.content_panels + [
         FieldPanel('intro', classname="full"),
-        FieldPanel('nav_description', classname="full"),
         StreamFieldPanel('body'),
     ]
     subpage_types = ['ayewa.ActionApproach']
@@ -40,7 +38,6 @@ class ActionApproachIndexPage(IndexPage):
 
 class SolutionIndexPage(IndexPage):
     content_panels = Page.content_panels + [
-        FieldPanel('nav_description', classname="full"),
         StreamFieldPanel('body'),
     ]
     subpage_types = ['ayewa.Solution']
@@ -48,29 +45,27 @@ class SolutionIndexPage(IndexPage):
 
 class PeopleIndexPage(IndexPage):
     content_panels = Page.content_panels + [
-        FieldPanel('nav_description', classname="full"),
         StreamFieldPanel('body'),
     ]
     subpage_types = ['ayewa.People']
 
 class ResourceIndexPage(IndexPage):
     content_panels = Page.content_panels + [
-        FieldPanel('nav_description', classname="full"),
         StreamFieldPanel('body'),
     ]
     subpage_types = ['ayewa.Resource']
 
 class ScienceIndexPage(IndexPage):
     content_panels = Page.content_panels + [
-        FieldPanel('nav_description', classname="full"),
         StreamFieldPanel('body'),
     ]
+    subpage_types = ['ayewa.Resource','ayewa.Solution','ayewa.ActionApproach']
 
 class OtherIndexPage(IndexPage):
     content_panels = Page.content_panels + [
-        FieldPanel('nav_description', classname="full"),
         StreamFieldPanel('body'),
     ]
+    subpage_types = ['ayewa.People','ayewa.Resource','ayewa.Solution','ayewa.ActionApproach']
 
 
 class Solution(Page):
@@ -83,8 +78,8 @@ class Solution(Page):
 
     def __str__(self):
         try:
-            return '{name}'.format(
-                name=self.name,
+            return '{title}'.format(
+                title=self.title
             )
         except AttributeError:
             return 'unassigned'
@@ -382,12 +377,8 @@ class Resource(Page):
 
     def __str__(self):
         try:
-            classes = ', '.join(self.list_resource_classes())
-            if classes:
-                classes = '({classes})'.format(classes=classes)
-            return '{name} {classes}'.format(
-                name=self.name,
-                classes=classes
+            return '{title}'.format(
+                title=self.title
             )
         except AttributeError:
             return 'unassigned'
